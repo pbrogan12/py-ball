@@ -28,8 +28,22 @@ def get_scores(date=time.strftime('%d/%m/%Y')):
         print msg
 
 def get_leaders(limit='10', stat='h', year=time.strftime('%Y')):
-    url = "http://mlb.mlb.com/pubajax/wf/flow/stats.splayer?season={0}&sort_order='desc'&sort_column='{2}'&stat_type=hitting&page_type=SortablePlayer&game_type='R'&player_pool=QUALIFIER&season_type=ANY&sport_code='mlb'&results={1}&recSP=1&recPP=10".format(year,limit,stat)
-    data = requests.get(url)
+    payload = {
+            'season' : year,
+            'sort_order' : '\'desc\'',
+            'sort_column' : '{}'.format(stat),
+            'stat_type' : 'hitting',
+            'page_type' : 'SortablePlayer',
+            'game_type' : '\'R\'',
+            'player_pool' : 'QUALIFIER',
+            'season_type' : 'ANY',
+            'sport_code' : '\'mlb\'',
+            'results' : limit,
+            'recSP' : '1',
+            'recPP': '50'
+    }
+    url = 'http://mlb.mlb.com/pubajax/wf/flow/stats.splayer'
+    data = requests.get(url,params=payload)
     data = data.json()
     for player in data['stats_sortable_player']['queryResults']['row']:
         print player['name_display_first_last'] ,player['player_id'], player['team'], player['bats'], player['h'], player['avg']
