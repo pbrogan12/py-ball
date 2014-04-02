@@ -11,10 +11,11 @@ def get_scores(date=time.strftime('%d/%m/%Y')):
     data = requests.get(url)
     # Initialize json
     data = data.json()
+    games = {}
 
     for game in data['data']['games']['game']:
-        homeTeamName = game['home_team_name']
-        awayTeamName = game['away_team_name']
+        homeTeamName = game['home_name_abbrev']
+        awayTeamName = game['away_name_abbrev']
         try:
             homeTeamScore = game['linescore']['r']['home']
             awayTeamScore = game['linescore']['r']['away']
@@ -24,8 +25,15 @@ def get_scores(date=time.strftime('%d/%m/%Y')):
             awayTeamScore = ''
             inning = game['time_hm_lg']
 
-        msg = awayTeamName + ' ' + awayTeamScore + ' ' + homeTeamName + ' ' + homeTeamScore + ' ' + inning
-        print msg
+        games[game['game_media']['media']['title']] = {
+            'homeTeamName' : homeTeamName,
+            'awayTeamName' : awayTeamName,
+            'homeTeamScore' : homeTeamScore,
+            'awayTeamScore' : awayTeamScore,
+            'inning' : str(inning)
+        }
+
+    return games
 
 def get_leaders(limit='10', stat='h', year=time.strftime('%Y')):
     payload = {
