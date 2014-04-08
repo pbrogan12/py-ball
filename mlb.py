@@ -56,5 +56,18 @@ def get_leaders(limit='10', stat='h', year=time.strftime('%Y')):
     for player in data['stats_sortable_player']['queryResults']['row']:
         print player['name_display_first_last'] ,player['player_id'], player['team'], player['bats'], player['h'], player['avg']
 
+def get_recent(playerId, limit='10',stat='h'):
+    payload = {
+            'results' : limit,
+            'game_type' : '\'R\'',
+            'season' : time.strftime('%Y'),
+            'player_id' : playerId,
+            'mlb_individual_hitting_last_x_total.col_in' : ['game_date','opp','ab','r','h','hr','rbi','bb','so','sb','avg','home_away','game_id','game_type']
+    }
+    url = 'http://mlb.mlb.com/lookup/json/named.mlb_bio_hitting_last_10.bam'
+    data = requests.get(url,params=payload)
+    data = data.json()
+    return data['mlb_bio_hitting_last_10']['mlb_individual_hitting_last_x_total']['queryResults']['row'][stat]
+
 if __name__ == '__main__':
     get_scores()
