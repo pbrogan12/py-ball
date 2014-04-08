@@ -36,6 +36,7 @@ def get_scores(date=time.strftime('%d/%m/%Y')):
     return games
 
 def get_leaders(limit='10', stat='h', year=time.strftime('%Y')):
+    playerDict = {}
     payload = {
             'season' : year,
             'sort_order' : '\'desc\'',
@@ -54,7 +55,14 @@ def get_leaders(limit='10', stat='h', year=time.strftime('%Y')):
     data = requests.get(url,params=payload)
     data = data.json()
     for player in data['stats_sortable_player']['queryResults']['row']:
-        print player['name_display_first_last'] ,player['player_id'], player['team'], player['bats'], player['h'], player['avg']
+        playerDict[player['name_display_first_last']] = {}
+        playerDict[player['name_display_first_last']]['playerId'] = player['player_id']
+        playerDict[player['name_display_first_last']]['team'] = player['team']
+        playerDict[player['name_display_first_last']]['bats'] = player['bats']
+        playerDict[player['name_display_first_last']]['h'] = player['h']
+        playerDict[player['name_display_first_last']]['avg'] = player['avg']
+
+    return playerDict
 
 def get_recent(playerId, limit='10',stat='h'):
     payload = {
