@@ -1,5 +1,6 @@
 import requests
 import time
+import argparse
 
 # A function that returns scores on a certain day
 
@@ -31,12 +32,12 @@ def get_scores(date=time.strftime('%d/%m/%Y')):
             awayTeamScore = ''
             inning = game['time_hm_lg']
 
-        games[game['game_media']['media']['title']] = {
+        games[awayTeamName + homeTeamName] = {
             'homeTeamName': homeTeamName,
             'awayTeamName': awayTeamName,
             'homeTeamScore': homeTeamScore,
             'awayTeamScore': awayTeamScore,
-            'inning': str(inning)
+            'inning': inning
         }
 
     return games
@@ -102,4 +103,16 @@ def get_recent(playerId, limit='10', stat='h'):
         'mlb_individual_hitting_last_x_total']['queryResults']['row'][stat]
 
 if __name__ == '__main__':
-    get_scores()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-d', '--date', help='Date must be in DD/MM/YYYY')
+    args = parser.parse_args()
+
+    if args.date:
+        scores = get_scores(date=args.date)
+
+    else:
+        scores = get_scores()
+
+    for i in scores:
+        print ' '.join([scores[i]['awayTeamName'], scores[i]['awayTeamScore'],
+                       '@', scores[i]['homeTeamName'], scores[i]['homeTeamScore'], scores[i]['inning']])
