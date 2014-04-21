@@ -1,19 +1,26 @@
 import requests
 import time
 import argparse
+from prettytable import PrettyTable
 
 # A function that returns scores on a certain day
 
 
-def get_scores(date=time.strftime('%d/%m/%Y')):
-    date = date.split("/")
-    year = date[2]
-    month = date[1]
-    day = date[0]
-    url = 'http://mlb.mlb.com/gdcross/components/game/mlb/year_{0}/month_{1}/day_{2}/master_scoreboard.json'.format(
-        year,
-        month,
-        day)
+def get_scores(date=None):
+    if not date:
+        date = time.strftime("%m/%d/%Y")
+
+    try:
+        date = time.strptime(date, "%m/%d/%Y")
+    except:
+        print "Date must be in MM/DD/YYYY format."
+        raise
+
+    url = 'http://mlb.mlb.com/gdcross/components/game/mlb/year_{0}/month_{1:02d}/day_{2:02d}/master_scoreboard.json'.format(
+        date.tm_year,
+        date.tm_mon,
+        date.tm_mday)
+
     data = requests.get(url)
     # Initialize json
     data = data.json()
@@ -113,6 +120,11 @@ if __name__ == '__main__':
     else:
         scores = get_scores()
 
+    table = PrettyTable(['Away', 'A Score', 'Home', 'H Score', 'Inning'])
     for i in scores:
-        print ' '.join([scores[i]['awayTeamName'], scores[i]['awayTeamScore'],
-                       '@', scores[i]['homeTeamName'], scores[i]['homeTeamScore'], scores[i]['inning']])
+        table.add_row([scores[i]['awayTeamName'],
+                      scores[i]['awayTeamScore'],
+                      scores[i]['homeTeamName'],
+                      scores[i]['homeTeamScore'],
+                      scores[i]['inning']])
+    print table.get_string(sortby='Inning')
