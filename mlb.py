@@ -22,6 +22,9 @@ def get_scores(date=None):
         date.tm_mday)
 
     data = requests.get(url)
+
+    # Raises error if http response is 4XX or 5XX
+    data.raise_for_status()
     # Initialize json
     data = data.json()
     games = {}
@@ -68,7 +71,11 @@ def get_leaders(limit='10', stat='h', year=time.strftime('%Y')):
     }
     url = 'http://mlb.mlb.com/pubajax/wf/flow/stats.splayer'
     data = requests.get(url, params=payload)
+    # Raises error if http response is 4XX or 5XX
+    data.raise_for_status()
+
     data = data.json()
+
     for player in data['stats_sortable_player']['queryResults']['row']:
         playerDict[player['name_display_first_last']] = {}
         playerDict[
@@ -105,6 +112,9 @@ def get_recent(playerId, limit='10', stat='h'):
             'game_type']}
     url = 'http://mlb.mlb.com/lookup/json/named.mlb_bio_hitting_last_10.bam'
     data = requests.get(url, params=payload)
+    # Raises error if http response is 4XX or 5XX
+    data.raise_for_status()
+
     data = data.json()
     return data['mlb_bio_hitting_last_10'][
         'mlb_individual_hitting_last_x_total']['queryResults']['row'][stat]
