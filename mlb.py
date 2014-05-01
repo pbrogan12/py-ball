@@ -121,7 +121,7 @@ def get_recent(playerId, limit='10', stat='h'):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--date', help='Date must be in DD/MM/YYYY')
+    parser.add_argument('-d', '--date', help='Date must be in MM/DD/YYYY')
     args = parser.parse_args()
 
     if args.date:
