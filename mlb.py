@@ -119,6 +119,20 @@ def get_recent(playerId, limit='10', stat='h'):
     return data['mlb_bio_hitting_last_10'][
         'mlb_individual_hitting_last_x_total']['queryResults']['row'][stat]
 
+# Return career regular season totals for pitchers
+def get_pitching_stats(playerId):
+    payload = { 'game_type' : '\'R\'',
+    'sport_code' : '\'mlb\'',
+    'sort_by' : '\'season_asc\'',
+    'player_id' : playerId,
+    'sport_pitching_composed.season' : '2014'}
+    url = 'http://mlb.mlb.com/lookup/json/named.sport_pitching_composed.bam'
+    data = requests.get(url, params=payload)
+    # Raises error if http response is 4XX or 5XX
+    data.raise_for_status()
+    data = data.json()
+    return data['sport_pitching_composed']['sport_career_pitching']['queryResults']['row']
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--date', help='Date must be in MM/DD/YYYY')
