@@ -133,6 +133,17 @@ def get_pitching_stats(playerId):
     data = data.json()
     return data['sport_pitching_composed']['sport_career_pitching']['queryResults']['row']
 
+# Returns upcoming coming games for a player
+def get_upcoming_games(playerId, limit=5):
+    payload = {'results' : limit,
+    'player_id' : playerId}
+    url = 'http://mlb.mlb.com/lookup/json/named.mlb_upcoming_games.bam'
+    data = requests.get(url,params=payload)
+    # Raises error if http response is 4XX or 5XX
+    data.raise_for_status()
+    data = data.json()
+    return data['mlb_upcoming_games']['queryResults']['row']
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--date', help='Date must be in MM/DD/YYYY')
